@@ -21,6 +21,8 @@
       "notification/*": ["./src/*"],
       "design": ["./@mf-types/design"],
       "design/*": ["./@mf-types/design/*", "./@mf-types/design/compiled-types/src/*"],
+      "i18n": ["./@mf-types/i18n"],
+      "i18n/*": ["./@mf-types/i18n/*", "./@mf-types/i18n/compiled-types/Client/src/*"],
       "REMOTE_ALIAS_IDENTIFIER/*": ["./src/*"]
     }
   },

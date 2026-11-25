@@ -1,7 +1,7 @@
 import type { ProxyOptions } from 'vite';
 
 /**
- * Where the design system and the API come from, for the dev proxy and for
+ * Where the design system, the languages and the API come from, for the dev proxy and for
  * the type download. Both go through a Ki.CL deployment by default, the same
  * paths Ki.CL serves them on, so the browser only ever talks to localhost.
  */
@@ -17,6 +17,7 @@ const getTargets = (env: Env) => {
   return {
     api: env.KICL_BACKEND_URL || host,
     design: env.KICL_DESIGN_URL || host,
+    i18n: env.KICL_I18N_URL || host,
     host,
   };
 };
@@ -38,7 +39,7 @@ const getHeaders = (env: Env): Record<string, string> =>
   env.KICL_CLIENT_TOKEN ? { [TOKEN_HEADER]: env.KICL_CLIENT_TOKEN } : {};
 
 const getProxy = (env: Env): Record<string, ProxyOptions> => {
-  const { api, design } = getTargets(env);
+  const { api, design, i18n } = getTargets(env);
   const headers = getHeaders(env);
 
   const route = (target: string, extra?: ProxyOptions): ProxyOptions => ({
@@ -53,16 +54,21 @@ const getProxy = (env: Env): Record<string, ProxyOptions> => {
     // The gateway: the session, and the graph over HTTP and WebSocket.
     '/api': route(api, { ws: true }),
     '/design': route(design),
+    '/i18n': route(i18n),
   };
 };
 
 const getTypeUrls = (env: Env) => {
-  const { design } = getTargets(env);
+  const { design, i18n } = getTargets(env);
 
   return {
     design: {
       api: `${design}/design/types.d.ts`,
       zip: `${design}/design/types.zip`,
+    },
+    i18n: {
+      api: `${i18n}/i18n/@mf-types.d.ts`,
+      zip: `${i18n}/i18n/@mf-types.zip`,
     },
   };
 };
