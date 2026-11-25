@@ -20,19 +20,18 @@ const Standalone: React.FunctionComponent = () => {
   useResponsive();
 
   return (
-    <>
-      <Header />
-      <Session>
-        <ApolloProvider client={client}>
-          <Router>
-            <Route path='/'>
-              <Route index element={<Navigate replace to='notification/' />} />
-              <Route path='notification/' element={<Page />} />
-            </Route>
-          </Router>
-        </ApolloProvider>
-      </Session>
-    </>
+    <Session>
+      <ApolloProvider client={client}>
+        {/* Inside the session and the client: its language switcher subscribes to the list of languages. */}
+        <Header />
+        <Router>
+          <Route path='/'>
+            <Route index element={<Navigate replace to='notification/' />} />
+            <Route path='notification/' element={<Page />} />
+          </Route>
+        </Router>
+      </ApolloProvider>
+    </Session>
   );
 };
 
