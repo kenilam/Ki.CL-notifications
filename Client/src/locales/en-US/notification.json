@@ -1,0 +1,22 @@
+{
+  "action_demo": "Start a demo job",
+  "demo_done": "Done. A finished job looks like this.",
+  "demo_halfway": "Halfway there.",
+  "demo_started": "Started. Leave it running and watch the bell.",
+  "demo_title": "Demo job",
+  "intro": "The bell any Ki.CL page can drop in. It follows work that carries on after you leave its page, and tells you how it went.",
+  "preview": "What each kind looks like",
+  "preview_confirm": "Your picture is ready.",
+  "preview_error": "The drawing could not be finished.",
+  "preview_info": "A reply arrived in your conversation.",
+  "preview_neutral": "Something you started has news.",
+  "preview_running": "Reading the chords.",
+  "preview_title": "Preview",
+  "preview_warning": "Your request expired before it was confirmed.",
+  "session_failed": "Could not start a session",
+  "session_later": "Try again later.",
+  "session_limited": "Could not start a session right now",
+  "session_rejected": "Could not confirm you are human",
+  "session_retry": "Reload to try again.",
+  "title": "Notifications"
+}

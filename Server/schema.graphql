@@ -1,0 +1,56 @@
+directive @public on FIELD_DEFINITION
+
+scalar DateTime
+scalar JSONObject
+
+"""
+Words in the sender's i18next namespace: a key and the values it takes. The
+bell translates them in the visitor's language.
+"""
+type NotificationText {
+  key: String!
+  values: JSONObject!
+}
+
+enum NotificationLevel {
+  NEUTRAL
+  CONFIRM
+  ERROR
+  INFO
+  WARNING
+}
+
+"""
+One visitor's row for one source: work that carries on after its page is left.
+The sender describes it: where it links, how it looks and whether it runs.
+"""
+type Notification {
+  id: ID!
+  source: String!
+  path: String!
+  level: NotificationLevel!
+  running: Boolean!
+  namespace: String!
+  title: NotificationText!
+  message: NotificationText!
+  dismissedAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Query {
+  "The caller's notifications they haven't dismissed, newest first."
+  notifications: [Notification!]!
+}
+
+type Mutation {
+  "Takes notifications out of the caller's list. Answers the ids it took out."
+  notificationsDismiss(ids: [ID!]!): [ID!]!
+  "Starts a short pretend job for the caller, whose steps arrive like real work."
+  notificationsDemo: Boolean!
+}
+
+type Subscription {
+  "Each of the caller's notifications as it changes."
+  notificationsUpdated: Notification!
+}

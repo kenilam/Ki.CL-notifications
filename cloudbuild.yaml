@@ -1,0 +1,58 @@
+steps:
+  - id: Build
+    name: gcr.io/cloud-builders/docker
+    args: ['build', '--no-cache', '-t', '$_IMAGE', '.']
+
+  - id: Check
+    name: $_IMAGE
+    entrypoint: bash
+    args: ['-c', 'cd /src && node_modules/.bin/tsx --tsconfig Server/tsconfig.json Server/Scripts/registry.ts check $_REGISTRY_BUCKET']
+
+  - id: Push
+    name: gcr.io/cloud-builders/docker
+    args: ['push', '$_IMAGE']
+
+  # The service believes the visitor the gateway forwards, so only the gateway, Pub/Sub and the host may reach it.
+  - id: Private
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        if gcloud run services get-iam-policy $_SERVICE_NAME --region=$_DEPLOY_REGION --format='value(bindings.members)' | grep -qE 'allUsers|allAuthenticatedUsers'; then
+          echo "$_SERVICE_NAME lets anyone invoke it. Remove allUsers and allAuthenticatedUsers before deploying."
+          exit 1
+        fi
+
+  - id: Deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud run services update $_SERVICE_NAME \
+          --image=$_IMAGE \
+          --region=$_DEPLOY_REGION \
+          --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID \
+          --quiet
+        gcloud run services describe $_SERVICE_NAME --region=$_DEPLOY_REGION --format='value(status.url)' > /workspace/url
+
+  - id: Publish
+    name: $_IMAGE
+    entrypoint: bash
+    args: ['-c', 'cd /src && node_modules/.bin/tsx --tsconfig Server/tsconfig.json Server/Scripts/registry.ts publish $_REGISTRY_BUCKET "$(cat /workspace/url)/api"']
+
+substitutions:
+  _AR_HOSTNAME: us-central1-docker.pkg.dev
+  _AR_REPOSITORY: cloud-run-source-deploy
+  _DEPLOY_REGION: us-central1
+  _SERVICE_NAME: ki-cl-notifications-dev
+  _REGISTRY_BUCKET: ki-cl-registry-dev
+  _IMAGE: ${_AR_HOSTNAME}/${PROJECT_ID}/${_AR_REPOSITORY}/ki.cl-notifications/${_SERVICE_NAME}:${COMMIT_SHA}
+
+options:
+  dynamicSubstitutions: true
+  logging: CLOUD_LOGGING_ONLY
+
+images:
+  - $_IMAGE
