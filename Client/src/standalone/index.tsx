@@ -4,6 +4,9 @@ import ReactDOM from 'react-dom/client';
 // Core
 import 'design/core';
 
+// Icons
+import { Masks } from 'design/icons';
+
 // App
 import { Standalone } from './app';
 
@@ -23,6 +26,8 @@ const mount = async () => {
   if (appRoot) {
     ReactDOM.createRoot(appRoot).render(
       <StrictMode>
+        {/* The icons that components draw as CSS masks, such as a select option's check, as Ki.CL's root has them. */}
+        <Masks />
         <Standalone />
       </StrictMode>
     );
