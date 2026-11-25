@@ -47,6 +47,12 @@ export default defineConfig(({ command, mode }) => {
             name: 'design',
             entry: '/design/remoteEntry.js',
           },
+          // Only the standalone page loads it; inside Ki.CL the host has set up i18next already.
+          i18n: {
+            type: 'module',
+            name: 'i18n',
+            entry: '/i18n/remoteEntry.js',
+          },
         },
         // The singletons Ki.CL shares that this module uses, at Ki.CL's versions.
         shared: {
