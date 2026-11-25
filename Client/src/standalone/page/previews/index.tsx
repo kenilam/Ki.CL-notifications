@@ -13,16 +13,16 @@ const Previews: React.FunctionComponent = () => {
   const { t } = useTranslation('notification');
 
   return (
-    <section>
-      <Layout gap='narrow'>
+    <Layout gap='narrow'>
+      <section>
         <Heading is='h2' lookLike='h4'>
           {t('preview')}
         </Heading>
         {PREVIEWS.map(({ id }) => (
           <Preview id={id} key={id} />
         ))}
-      </Layout>
-    </section>
+      </section>
+    </Layout>
   );
 };
 
