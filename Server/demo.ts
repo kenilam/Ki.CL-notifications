@@ -6,7 +6,8 @@ const HOUR_MS = 60 * 60 * 1000;
 const PER_HOUR = 10;
 const STEP_MS = 3000;
 const SOURCE = 'demo';
-const PATH = '/notification/';
+/** Not this repo's own page: the bell hides what belongs to the page the visitor is on, so the demo would never show there. */
+const PATH = '/';
 
 /** This service runs one instance, so the allowance is kept in memory. */
 const started = new Map<string, number[]>();
