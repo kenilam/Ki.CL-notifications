@@ -18,15 +18,15 @@ const Page: React.FunctionComponent = () => {
   const { t } = useTranslation('notification');
 
   return (
-    <main className={classNames('kicl-max-inline-size-columns-8', 'kicl-margin-inline-auto', 'kicl-padding-inline-wide')}>
-      <Layout gap='wide'>
+    <Layout gap='wide'>
+      <main className={classNames('kicl-max-inline-size-columns-8', 'kicl-margin-inline-auto', 'kicl-padding-inline-wide')}>
         <Heading is='h1'>{t('title')}</Heading>
         <Text>{t('intro')}</Text>
         <Demo />
         <Previews />
-      </Layout>
-      <Notification />
-    </main>
+        <Notification />
+      </main>
+    </Layout>
   );
 };
 
