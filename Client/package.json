@@ -14,7 +14,7 @@
     "classnames": "2.5.1",
     "graphql": "17",
     "graphql-ws": "^6.2.0",
-    "i18next": "26.4.3",
+    "i18next": "26.7.2",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-i18next": "17.0.16",
