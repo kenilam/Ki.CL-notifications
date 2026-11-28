@@ -1,6 +1,9 @@
-import { PubSub } from 'graphql-subscriptions';
+import * as util from 'node:util';
 
-import { KEEP_MS, LEVELS, Notifications, type Level, type Notification, type Text } from './model.js';
+import { PubSub } from 'graphql-subscriptions';
+import { mongo } from 'mongoose';
+
+import { KEEP_MS, LEVELS, Notifications, ROW, type Level, type Notification, type Text } from './model.js';
 
 /**
  * A step of some work, sent by the service doing it. With an `owner` it is
@@ -62,7 +65,8 @@ export function isNotice(value: unknown): value is Notice {
   );
 }
 
-const isDuplicate = (error: unknown) => (error as { code?: number }).code === 11000;
+const refusedBy = (error: unknown) =>
+  error instanceof mongo.MongoServerError && error.code === 11000 ? error.keyPattern : undefined;
 
 export async function apply(notice: Notice): Promise<void> {
   const at = new Date(notice.at);
@@ -91,10 +95,19 @@ export async function apply(notice: Notice): Promise<void> {
         void updates.publish('UPDATED', { notificationsUpdated: written });
       }
     } catch (error) {
-      // The row is newer than this notice, so the upsert tried a second row for the same owner and source.
-      if (!isDuplicate(error)) {
+      const index = refusedBy(error);
+
+      if (!index) {
         throw error;
       }
+
+      // The row is newer than this notice, so the upsert tried a second row for the same owner and source.
+      if (util.isDeepStrictEqual(index, ROW)) {
+        return;
+      }
+
+      // Any other unique index refuses this notice on every retry, so it's logged and acknowledged.
+      console.error('[Notices] a unique index refused a notice', { source: notice.source, index });
     }
 
     return;

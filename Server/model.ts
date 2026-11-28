@@ -5,6 +5,9 @@ export const KEEP_MS = 30 * 24 * 60 * 60 * 1000;
 
 export const LEVELS = ['neutral', 'confirm', 'error', 'info', 'warning'] as const;
 
+/** Each visitor has one row per source. */
+export const ROW = { ownerGUID: 1, source: 1 } as const;
+
 export type Level = (typeof LEVELS)[number];
 
 export interface Text {
@@ -51,7 +54,7 @@ const NotificationSchema = new Schema<Notification>(
   { collection: 'notifications', timestamps: true, minimize: false },
 );
 
-NotificationSchema.index({ ownerGUID: 1, source: 1 }, { unique: true });
+NotificationSchema.index(ROW, { unique: true });
 NotificationSchema.index({ ownerGUID: 1, updatedAt: -1 });
 NotificationSchema.index({ source: 1 });
 NotificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
